@@ -146,50 +146,9 @@ export default function Dashboard() {
     }, 100);
   };
 
-  // Clear all data function
+  // Clear all data function - Note: With backend, this would need an API endpoint
   const clearAllData = () => {
-    const confirmClear = confirm('⚠️ Are you sure you want to clear ALL data?\n\nThis will permanently delete:\n• All billing history\n• All employee data\n• All support staff data\n• All guest data\n• Price master settings\n\nThis action cannot be undone!');
-    
-    if (confirmClear) {
-      try {
-        // Clear all localStorage data
-        localStorage.removeItem('billingHistory');
-        localStorage.removeItem('employees');
-        localStorage.removeItem('supportStaff');
-        localStorage.removeItem('guests');
-        localStorage.removeItem('priceMaster');
-        
-        // Also clear any other potential data
-        localStorage.removeItem('companyNames');
-        localStorage.removeItem('masterData');
-        localStorage.removeItem('reportData');
-        
-        // Reset all states to empty/default values
-        setStats({
-          breakfast: { employee: 0, guest: 0, total: 0 },
-          lunch: { employee: 0, guest: 0, total: 0 }
-        });
-        setCompanyWiseData([]);
-        setStartDate('');
-        setEndDate('');
-        
-        // Force reload the dashboard data to reflect empty state
-        setTimeout(() => {
-          loadDashboardData();
-        }, 100);
-        
-        alert('✅ All data has been cleared successfully!\n\nThe system has been reset to fresh state. All reports, billing history, and master data have been removed.');
-        
-        // Optional: Reload the page to ensure complete reset
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-        
-      } catch (error) {
-        console.error('Error clearing data:', error);
-        alert('❌ Error occurred while clearing data. Please try again.');
-      }
-    }
+    alert('⚠️ Clear All Data functionality requires backend implementation.\n\nPlease contact administrator to clear database.');
   };
 
   return (
