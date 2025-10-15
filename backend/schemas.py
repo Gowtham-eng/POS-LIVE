@@ -86,13 +86,32 @@ class SupportStaffUpdate(BaseModel):
     company_name: Optional[str] = None
     biometric_data: Optional[str] = None
 
-class SupportStaffResponse(SupportStaffBase):
+class SupportStaffResponse(BaseModel):
     id: int
-    created_by: str
-    created_date: str
+    staffId: str
+    name: str
+    designation: Optional[str] = None
+    companyName: Optional[str] = None
+    biometricData: Optional[str] = None
+    createdBy: str
+    createdDate: str
     
     class Config:
         from_attributes = True
+        populate_by_name = True
+        
+    @classmethod
+    def from_orm(cls, obj):
+        return cls(
+            id=obj.id,
+            staffId=obj.staff_id,
+            name=obj.name,
+            designation=obj.designation,
+            companyName=obj.company_name,
+            biometricData=obj.biometric_data,
+            createdBy=obj.created_by,
+            createdDate=obj.created_date
+        )
 
 # Guest schemas
 class GuestCreate(BaseModel):
