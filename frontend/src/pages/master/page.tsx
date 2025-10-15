@@ -397,15 +397,28 @@ export default function Master() {
     });
   };
 
-  const handlePriceMasterChange = (
+  const handlePriceMasterChange = async (
     type: 'employee' | 'company',
     meal: 'breakfast' | 'lunch',
     value: number
   ) => {
-    setPriceMaster((prev) => ({
-      ...prev,
-      [type]: { ...prev[type], [meal]: value }
-    }));
+    const updatedPrices = {
+      ...priceMaster,
+      [type]: { ...priceMaster[type], [meal]: value }
+    };
+    setPriceMaster(updatedPrices);
+    
+    // Auto-save to backend
+    try {
+      await priceMasterAPI.update({
+        employee_breakfast: updatedPrices.employee.breakfast,
+        employee_lunch: updatedPrices.employee.lunch,
+        company_breakfast: updatedPrices.company.breakfast,
+        company_lunch: updatedPrices.company.lunch
+      });
+    } catch (error) {
+      console.error('Error updating price master:', error);
+    }
   };
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
