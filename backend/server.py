@@ -322,7 +322,7 @@ async def get_billing_history(
         query = query.filter(BillingRecord.date <= end_date)
     
     records = query.order_by(BillingRecord.created_at.desc()).all()
-    return records
+    return [BillingResponse.from_orm(record) for record in records]
 
 @app.post("/api/billing/create", response_model=BillingResponse)
 async def create_billing(billing: BillingCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
