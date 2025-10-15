@@ -99,122 +99,28 @@ export default function Reports() {
       };
       const employeeData = await reportsAPI.getEmployeeReport(filters);
       
-      // Process billing data into employee report format (INCLUDES employees AND guests, excludes support staff)
-      const employeeData = bills
-        .filter(bill => !bill.isSupportStaff) // Include employees and guests, exclude support staff
-        .map(bill => {
-          const breakfastItems = bill.items.filter(item => item.name === 'Breakfast').reduce((sum, item) => sum + item.quantity, 0);
-          const lunchItems = bill.items.filter(item => item.name === 'Lunch').reduce((sum, item) => sum + item.quantity, 0);
-          
-          // Count exception items separately
-          const breakfastExceptions = bill.items.filter(item => item.name === 'Breakfast' && item.isException).reduce((sum, item) => sum + item.quantity, 0);
-          const lunchExceptions = bill.items.filter(item => item.name === 'Lunch' && item.isException).reduce((sum, item) => sum + item.quantity, 0);
-          
-          return {
-            id: bill.id,
-            employeeId: bill.isGuest ? 'GUEST' : (bill.customer?.employeeId || 'N/A'),
-            employeeName: bill.isGuest ? (bill.customer?.name || 'Unknown Guest') : (bill.customer?.employeeName || 'Unknown'),
-            company: bill.customer?.companyName || 'N/A',
-            date: bill.date,
-            time: bill.time,
-            breakfast: breakfastItems,
-            lunch: lunchItems,
-            breakfastExceptions,
-            lunchExceptions,
-            totalItems: bill.totalItems,
-            amount: bill.totalAmount,
-            isGuest: bill.isGuest,
-            hasExceptions: breakfastExceptions > 0 || lunchExceptions > 0
-          };
-        });
-
       setReportData(employeeData);
 
-      // Process billing data into support staff report format (ONLY support staff)
-      const supportStaffData = bills
-        .filter(bill => !bill.isGuest && bill.isSupportStaff) // Only support staff
-        .map(bill => {
-          const breakfastItems = bill.items.filter(item => item.name === 'Breakfast').reduce((sum, item) => sum + item.quantity, 0);
-          const lunchItems = bill.items.filter(item => item.name === 'Lunch').reduce((sum, item) => sum + item.quantity, 0);
-          
-          // Count exception items separately
-          const breakfastExceptions = bill.items.filter(item => item.name === 'Breakfast' && item.isException).reduce((sum, item) => sum + item.quantity, 0);
-          const lunchExceptions = bill.items.filter(item => item.name === 'Lunch' && item.isException).reduce((sum, item) => sum + item.quantity, 0);
-          
-          return {
-            id: bill.id,
-            staffId: bill.customer?.staffId || 'N/A',
-            staffName: bill.customer?.name || 'Unknown',
-            designation: bill.customer?.designation || 'N/A',
-            company: bill.customer?.companyName || 'N/A',
-            date: bill.date,
-            time: bill.time,
-            breakfast: breakfastItems,
-            lunch: lunchItems,
-            breakfastExceptions,
-            lunchExceptions,
-            totalItems: bill.totalItems,
-            amount: bill.totalAmount,
-            hasExceptions: breakfastExceptions > 0 || lunchExceptions > 0
-          };
-        });
-
+      // Load support staff report data
+      const staffFilters = {
+        start_date: startDate,
+        end_date: endDate,
+        staff_id: selectedSupportStaff,
+        company: selectedCompany
+      };
+      const supportStaffData = await reportsAPI.getSupportStaffReport(staffFilters);
       setSupportStaffReportData(supportStaffData);
 
-      // Get current price master for company report calculations
-      const savedPriceMaster = localStorage.getItem('priceMaster');
-      const priceMaster = savedPriceMaster ? JSON.parse(savedPriceMaster) : {
-        employee: { breakfast: 20, lunch: 48 },
-        company: { breakfast: 135, lunch: 165 }
+      // Load company report data
+      const companyFilters = {
+        start_date: startDate,
+        end_date: endDate,
+        company: selectedCompany
       };
-
-      // Process company-wise report data with COMPANY pricing
-      const companyStats: { [key: string]: CompanyReport } = {};
-      
-      bills.forEach(bill => {
-        const companyName = bill.isGuest 
-          ? bill.customer?.companyName || 'Guest Company'
-          : bill.customer?.companyName || 'Unknown Company';
-        
-        const breakfastItems = bill.items.filter(item => item.name === 'Breakfast').reduce((sum, item) => sum + item.quantity, 0);
-        const lunchItems = bill.items.filter(item => item.name === 'Lunch').reduce((sum, item) => sum + item.quantity, 0);
-        
-        if (!companyStats[companyName]) {
-          companyStats[companyName] = {
-            companyName,
-            totalEmployees: 0,
-            totalTransactions: 0,
-            breakfast: 0,
-            lunch: 0,
-            totalItems: 0,
-            totalAmount: 0,
-            employees: []
-          };
-        }
-
-        companyStats[companyName].totalTransactions += 1;
-        companyStats[companyName].breakfast += breakfastItems;
-        companyStats[companyName].lunch += lunchItems;
-        companyStats[companyName].totalItems += bill.totalItems;
-        
-        // Calculate amount using COMPANY pricing for company report
-        const companyBreakfastAmount = breakfastItems * priceMaster.company.breakfast;
-        const companyLunchAmount = lunchItems * priceMaster.company.lunch;
-        companyStats[companyName].totalAmount += companyBreakfastAmount + companyLunchAmount;
-
-        // Track unique employees
-        const employeeName = bill.isGuest ? bill.customer?.name || 'Guest' : bill.customer?.employeeName || bill.customer?.name || 'Unknown';
-        if (!companyStats[companyName].employees.includes(employeeName)) {
-          companyStats[companyName].employees.push(employeeName);
-          companyStats[companyName].totalEmployees += 1;
-        }
-      });
-
-      const companyArray = Object.values(companyStats).sort((a, b) => b.totalAmount - a.totalAmount);
-      setCompanyReportData(companyArray);
-
-      // Calculate summary statistics based on active tab
-      updateSummaryStats(activeTab, employeeData, supportStaffData, companyArray);
+      const companyData = await reportsAPI.getCompanyReport(companyFilters);
+      setCompanyReportData(companyData);
+    } catch (error) {
+      console.error('Error loading report data:', error);
     }
   };
 
