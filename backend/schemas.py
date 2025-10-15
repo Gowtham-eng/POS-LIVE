@@ -37,13 +37,36 @@ class EmployeeUpdate(BaseModel):
     location: Optional[str] = None
     qr_code: Optional[str] = None
 
-class EmployeeResponse(EmployeeBase):
+class EmployeeResponse(BaseModel):
     id: int
-    created_by: str
-    created_date: str
+    employeeId: str
+    employeeName: str
+    companyName: Optional[str] = None
+    entity: Optional[str] = None
+    mobileNumber: Optional[str] = None
+    location: Optional[str] = None
+    qrCode: Optional[str] = None
+    createdBy: str
+    createdDate: str
     
     class Config:
         from_attributes = True
+        populate_by_name = True
+        
+    @classmethod
+    def from_orm(cls, obj):
+        return cls(
+            id=obj.id,
+            employeeId=obj.employee_id,
+            employeeName=obj.employee_name,
+            companyName=obj.company_name,
+            entity=obj.entity,
+            mobileNumber=obj.mobile_number,
+            location=obj.location,
+            qrCode=obj.qr_code,
+            createdBy=obj.created_by,
+            createdDate=obj.created_date
+        )
 
 # Support Staff schemas
 class SupportStaffBase(BaseModel):
