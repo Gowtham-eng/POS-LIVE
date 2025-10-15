@@ -466,7 +466,7 @@ export default function Billing() {
           is_support_staff: false,
           customer: {
             name: guest.name,
-            companyName: guest.company_name
+            companyName: guest.companyName
           },
           items: cart.map(item => ({
             id: item.id,
