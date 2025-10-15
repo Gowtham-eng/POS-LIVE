@@ -295,7 +295,7 @@ async def delete_support_staff(staff_id: int, db: Session = Depends(get_db), cur
 @app.get("/api/guests", response_model=List[GuestResponse])
 async def get_guests(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     guests = db.query(Guest).all()
-    return guests
+    return [GuestResponse.from_orm(g) for g in guests]
 
 @app.post("/api/guests", response_model=GuestResponse)
 async def create_guest(guest: GuestCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
