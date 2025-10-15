@@ -348,17 +348,30 @@ export default function Master() {
     }
   };
 
-  const handleDelete = (item: Employee | SupportStaff) => {
-    if (activeTab === 'employee') {
-      const employee = item as Employee;
-      if (confirm(`Delete employee "${employee.employeeName}"?`)) {
-        setEmployees(employees.filter((e) => e.id !== employee.id));
+  const handleDelete = async (item: Employee | SupportStaff) => {
+    try {
+      if (activeTab === 'employee') {
+        const employee = item as Employee;
+        if (confirm(`Delete employee "${employee.employeeName}"?`)) {
+          setIsLoading(true);
+          await employeeAPI.delete(employee.id);
+          alert('Employee deleted successfully!');
+          await loadAllData();
+        }
+      } else {
+        const staff = item as SupportStaff;
+        if (confirm(`Delete support staff "${staff.name}"?`)) {
+          setIsLoading(true);
+          await supportStaffAPI.delete(staff.id);
+          alert('Support staff deleted successfully!');
+          await loadAllData();
+        }
       }
-    } else {
-      const staff = item as SupportStaff;
-      if (confirm(`Delete support staff "${staff.name}"?`)) {
-        setSupportStaff(supportStaff.filter((s) => s.id !== staff.id));
-      }
+    } catch (error: any) {
+      console.error('Error deleting record:', error);
+      alert(error.response?.data?.detail || 'Failed to delete record. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
