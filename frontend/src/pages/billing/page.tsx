@@ -866,7 +866,7 @@ export default function Billing() {
                         <button
                           key={emp.id}
                           onClick={() => {
-                            setSelectedEmployee(emp.id);
+                            setSelectedEmployee(emp.id.toString());
                             setEmployeeSearch(`${emp.employeeName} (${emp.employeeId})`);
                           }}
                           className="w-full px-2 py-2 text-left hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
