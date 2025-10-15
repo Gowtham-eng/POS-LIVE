@@ -97,9 +97,16 @@ export default function Billing() {
   );
 
   // Check if employee/support staff has already consumed meals today
-  const checkConsumption = (personId: string, isEmployee: boolean = true) => {
+  const checkConsumption = async (personId: string, isEmployee: boolean = true) => {
     const today = new Date().toISOString().split('T')[0];
-    const billingHistory = JSON.parse(localStorage.getItem('billingHistory') || '[]');
+    let billingHistory: any[] = [];
+    
+    try {
+      billingHistory = await billingAPI.getHistory(today, today);
+    } catch (error) {
+      console.error('Error fetching billing history:', error);
+      return { breakfast: 0, lunch: 0 };
+    }
     
     const todaysBills = billingHistory.filter((bill: any) => 
       bill.date === today && 
