@@ -1,23 +1,33 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authAPI } from '../../services/api';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (username && password) {
       setIsLoading(true);
-      // Simulate loading
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('currentUser', username.toLowerCase()); // Store current user for support staff validation
-      navigate('/dashboard');
-      setIsLoading(false);
+      setError('');
+      
+      try {
+        const response = await authAPI.login(username, password);
+        localStorage.setItem('token', response.access_token);
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('currentUser', username.toLowerCase());
+        navigate('/dashboard');
+      } catch (err: any) {
+        console.error('Login error:', err);
+        setError(err.response?.data?.detail || 'Login failed. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
