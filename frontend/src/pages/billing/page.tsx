@@ -136,6 +136,12 @@ export default function Billing() {
     return { breakfast: breakfastCount, lunch: lunchCount };
   };
 
+  const handleSupportStaffSelect = async (staffId: string) => {
+    setSelectedSupportStaff(staffId);
+    const consumption = await checkConsumption(staffId, false);
+    setTodaysConsumption(consumption);
+  };
+
   const addToCart = async (item: typeof menuItems[0]) => {
     // Only validate for employees and support staff, not guests
     if (!isGuest) {
