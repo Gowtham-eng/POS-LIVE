@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import Layout from '../../components/feature/Layout';
+import { dashboardAPI } from '../../services/api';
 
 interface BillingRecord {
   id: string;
@@ -22,6 +23,7 @@ interface BillingRecord {
 export default function Dashboard() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState({
     breakfast: {
       employee: 0,
@@ -43,7 +45,20 @@ export default function Dashboard() {
     loadDashboardData();
   }, []);
 
-  const loadDashboardData = () => {
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      const response = await dashboardAPI.getStats(startDate, endDate);
+      setStats(response.stats);
+      setCompanyWiseData(response.companyWiseData);
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadDashboardDataOld = () => {
     const billingHistory = localStorage.getItem('billingHistory');
     if (billingHistory) {
       const bills: BillingRecord[] = JSON.parse(billingHistory);
