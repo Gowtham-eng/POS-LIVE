@@ -142,7 +142,7 @@ export default function Billing() {
     if (staffName && staffIdText) {
       setSupportStaffSearch(`${staffName} (${staffIdText})`);
     }
-    const staff = supportStaff.find(s => s.id === staffId);
+    const staff = supportStaff.find(s => s.id.toString() === staffId);
     if (staff) {
       const consumption = await checkConsumption(staff.staffId, false);
       setTodaysConsumption(consumption);
