@@ -137,10 +137,16 @@ export default function Billing() {
     return { breakfast: breakfastCount, lunch: lunchCount };
   };
 
-  const handleSupportStaffSelect = async (staffId: string) => {
+  const handleSupportStaffSelect = async (staffId: string, staffName?: string, staffIdText?: string) => {
     setSelectedSupportStaff(staffId);
-    const consumption = await checkConsumption(staffId, false);
-    setTodaysConsumption(consumption);
+    if (staffName && staffIdText) {
+      setSupportStaffSearch(`${staffName} (${staffIdText})`);
+    }
+    const staff = supportStaff.find(s => s.id === staffId);
+    if (staff) {
+      const consumption = await checkConsumption(staff.staffId, false);
+      setTodaysConsumption(consumption);
+    }
   };
 
   const addToCart = async (item: typeof menuItems[0]) => {
