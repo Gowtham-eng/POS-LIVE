@@ -51,9 +51,12 @@ export default function Reports() {
     totalAmount: 0
   });
 
-  // Load data on component mount
+  // Load data on component mount and when filters change
   useEffect(() => {
     loadReportData();
+  }, [startDate, endDate, selectedEmployee, selectedSupportStaff, selectedCompany]);
+
+  useEffect(() => {
     loadEmployees();
     loadSupportStaff();
   }, []);
