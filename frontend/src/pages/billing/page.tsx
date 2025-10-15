@@ -499,12 +499,9 @@ export default function Billing() {
           is_guest: false,
           is_support_staff: false,
           customer: {
-            employeeId: employee.employee_id,
-            employeeName: employee.employee_name,
-            companyName: employee.company_name,
-            entity: employee.entity,
-            mobileNumber: employee.mobile_number,
-            location: employee.location
+            employeeId: employee.employeeId,
+            employeeName: employee.employeeName,
+            companyName: employee.companyName
           },
           items: cart.map(item => ({
             id: item.id,
