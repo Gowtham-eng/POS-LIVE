@@ -253,7 +253,7 @@ async def sync_hrms(db: Session = Depends(get_db), current_user: User = Depends(
 @app.get("/api/support-staff", response_model=List[SupportStaffResponse])
 async def get_support_staff(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     staff = db.query(SupportStaff).all()
-    return staff
+    return [SupportStaffResponse.from_orm(s) for s in staff]
 
 @app.post("/api/support-staff", response_model=SupportStaffResponse)
 async def create_support_staff(staff: SupportStaffCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
