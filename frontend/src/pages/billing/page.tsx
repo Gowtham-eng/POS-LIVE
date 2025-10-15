@@ -540,10 +540,10 @@ export default function Billing() {
         alert('✅ Checkout successful!');
         resetCheckout();
       } else if (selectedSupportStaff) {
-        const staff = supportStaff.find(s => s.id === selectedSupportStaff || s.id.toString() === selectedSupportStaff.toString());
+        const staff = supportStaff.find(s => s.id.toString() === selectedSupportStaff);
         if (!staff) {
-          console.error('Support staff not found. Selected:', selectedSupportStaff, 'Staff:', supportStaff);
-          alert('Invalid support staff selection');
+          console.error('Support staff not found. Selected:', selectedSupportStaff, 'Staff:', supportStaff.map(s => ({id: s.id, name: s.name})));
+          alert('Invalid support staff selection. Please select a support staff member again.');
           return;
         }
 
