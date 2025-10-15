@@ -265,7 +265,7 @@ async def create_support_staff(staff: SupportStaffCreate, db: Session = Depends(
     db.add(db_staff)
     db.commit()
     db.refresh(db_staff)
-    return db_staff
+    return SupportStaffResponse.from_orm(db_staff)
 
 @app.put("/api/support-staff/{staff_id}", response_model=SupportStaffResponse)
 async def update_support_staff(staff_id: int, staff: SupportStaffUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
