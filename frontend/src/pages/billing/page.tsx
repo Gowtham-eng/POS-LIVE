@@ -497,10 +497,10 @@ export default function Billing() {
       }
 
       if (selectedEmployee) {
-        const employee = employees.find(e => e.id === selectedEmployee || e.id.toString() === selectedEmployee.toString());
+        const employee = employees.find(e => e.id.toString() === selectedEmployee);
         if (!employee) {
-          console.error('Employee not found. Selected:', selectedEmployee, 'Employees:', employees);
-          alert('Invalid employee selection');
+          console.error('Employee not found. Selected:', selectedEmployee, 'Employees:', employees.map(e => ({id: e.id, name: e.employeeName})));
+          alert('Invalid employee selection. Please select an employee again.');
           return;
         }
 
