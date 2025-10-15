@@ -225,7 +225,7 @@ export default function Billing() {
     setPendingItem(null);
   };
 
-  const updateQuantity = (id: string, quantity: number) => {
+  const updateQuantity = async (id: string, quantity: number) => {
     if (quantity === 0) {
       setCart(cart.filter(item => item.id !== id));
     } else {
