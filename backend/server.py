@@ -170,7 +170,7 @@ async def update_employee(employee_id: int, employee: EmployeeUpdate, db: Sessio
     
     db.commit()
     db.refresh(db_employee)
-    return db_employee
+    return EmployeeResponse.from_orm(db_employee)
 
 @app.delete("/api/employees/{employee_id}")
 async def delete_employee(employee_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
