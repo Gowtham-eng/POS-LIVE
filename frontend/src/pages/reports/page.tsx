@@ -58,29 +58,46 @@ export default function Reports() {
     loadSupportStaff();
   }, []);
 
-  const loadEmployees = () => {
-    const savedEmployees = localStorage.getItem('employees');
-    if (savedEmployees) {
-      const employeeData = JSON.parse(savedEmployees);
-      setEmployees(employeeData);
+  const loadEmployees = async () => {
+    try {
+      const employeeData = await reportsAPI.getEmployeeReport({});
+      // Get unique employees from report data
+      const uniqueEmployees = Array.from(
+        new Set(employeeData.map((item: any) => JSON.stringify({ id: item.employeeId, name: item.employeeName })))
+      ).map((item: any) => JSON.parse(item));
+      setEmployees(uniqueEmployees);
       
       // Extract unique company names
-      const uniqueCompanies = [...new Set(employeeData.map((emp: any) => emp.companyName).filter(Boolean))];
+      const uniqueCompanies = [...new Set(employeeData.map((item: any) => item.company).filter(Boolean))];
       setCompanies(uniqueCompanies);
+    } catch (error) {
+      console.error('Error loading employees:', error);
     }
   };
 
-  const loadSupportStaff = () => {
-    const savedSupportStaff = localStorage.getItem('supportStaff');
-    if (savedSupportStaff) {
-      setSupportStaff(JSON.parse(savedSupportStaff));
+  const loadSupportStaff = async () => {
+    try {
+      const staffData = await reportsAPI.getSupportStaffReport({});
+      // Get unique support staff from report data
+      const uniqueStaff = Array.from(
+        new Set(staffData.map((item: any) => JSON.stringify({ id: item.staffId, name: item.staffName })))
+      ).map((item: any) => JSON.parse(item));
+      setSupportStaff(uniqueStaff);
+    } catch (error) {
+      console.error('Error loading support staff:', error);
     }
   };
 
-  const loadReportData = () => {
-    const billingHistory = localStorage.getItem('billingHistory');
-    if (billingHistory) {
-      const bills: BillingRecord[] = JSON.parse(billingHistory);
+  const loadReportData = async () => {
+    try {
+      // Load employee report data
+      const filters = {
+        start_date: startDate,
+        end_date: endDate,
+        employee_id: selectedEmployee,
+        company: selectedCompany
+      };
+      const employeeData = await reportsAPI.getEmployeeReport(filters);
       
       // Process billing data into employee report format (INCLUDES employees AND guests, excludes support staff)
       const employeeData = bills
