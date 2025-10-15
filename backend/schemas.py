@@ -118,11 +118,22 @@ class GuestCreate(BaseModel):
     name: str
     company_name: str
 
-class GuestResponse(GuestCreate):
+class GuestResponse(BaseModel):
     id: int
+    name: str
+    companyName: str
     
     class Config:
         from_attributes = True
+        populate_by_name = True
+        
+    @classmethod
+    def from_orm(cls, obj):
+        return cls(
+            id=obj.id,
+            name=obj.name,
+            companyName=obj.company_name
+        )
 
 # Billing schemas
 class BillingCreate(BaseModel):
