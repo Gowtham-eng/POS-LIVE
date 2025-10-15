@@ -237,103 +237,14 @@ export default function Master() {
   const syncWithHRMS = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('https://contacts.dev.refex.group/api/employees/active', {
-        method: 'GET',
-        headers: {
-          Authorization:
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI2OGIwOGY0LTVkZTEtNDgwZC05NjNiLWYzYzMyZTkxYzA2ZSIsImlhdCI6MTc1Njc5ODYxMX0.BgfFmWhKpo1Irdnf2orvI6yFJrppImLxspI1W5IDGGE',
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const apiResponse = await response.json();
-      let hrmsEmployees: any[] = [];
-
-      if (Array.isArray(apiResponse)) {
-        hrmsEmployees = apiResponse;
-      } else if (apiResponse && apiResponse.results) {
-        hrmsEmployees = apiResponse.results;
-      } else {
-        throw new Error('Invalid response format from HRMS API');
-      }
-
-      const supportStaffDesignations = ['Driver', 'Office Assistant'];
-      const newEmployees: Employee[] = [];
-      const newSupportStaff: SupportStaff[] = [];
-
-      hrmsEmployees.forEach((emp, index) => {
-        try {
-          const designation = emp.designation || '';
-          const isSupport = supportStaffDesignations.some((d) =>
-            designation.toLowerCase().includes(d.toLowerCase())
-          );
-
-          if (isSupport) {
-            const supportItem: SupportStaff = {
-              id: emp.id || `hrms-support-${Date.now()}-${index}`,
-              staffId: emp.employee_id || '',
-              name: emp.employee_name || '',
-              designation: emp.designation || '',
-              companyName: emp.company?.company_name || '',
-              biometricData: emp.qr_code_image || '',
-              createdBy: 'HRMS Sync',
-              createdDate: new Date().toISOString().split('T')[0]
-            };
-            newSupportStaff.push(supportItem);
-          } else {
-            const employeeItem: Employee = {
-              id: emp.id || `hrms-${Date.now()}-${index}`,
-              employeeId: emp.employee_id || '',
-              employeeName: emp.employee_name || '',
-              companyName: emp.company?.company_name || '',
-              entity: emp.designation || '',
-              mobileNumber: emp.mobile_number || '',
-              location: emp.branch?.branch_name || '',
-              qrCode: emp.qr_code_image || '',
-              createdBy: 'HRMS Sync',
-              createdDate: new Date().toISOString().split('T')[0]
-            };
-            newEmployees.push(employeeItem);
-          }
-        } catch (e) {
-          console.warn(`Error mapping HRMS record at index ${index}:`, e);
-        }
-      });
-
-      const existingEmployeeIds = employees.map((e) => e.employeeId);
-      const existingSupportIds = supportStaff.map((s) => s.staffId);
-
-      const uniqueEmployees = newEmployees.filter(
-        (e) => e.employeeId && !existingEmployeeIds.includes(e.employeeId)
+      const response = await employeeAPI.syncHRMS();
+      alert(
+        `✅ HRMS sync completed.\nNew Employees: ${response.new_employees}\nNew Support Staff: ${response.new_support_staff}`
       );
-      const uniqueSupport = newSupportStaff.filter(
-        (s) => s.staffId && !existingSupportIds.includes(s.staffId)
-      );
-
-      if (uniqueEmployees.length || uniqueSupport.length) {
-        setEmployees([...employees, ...uniqueEmployees]);
-        setSupportStaff([...supportStaff, ...uniqueSupport]);
-        alert(
-          `✅ HRMS sync completed.\nNew Employees: ${uniqueEmployees.length}\nNew Support Staff: ${uniqueSupport.length}`
-        );
-      } else {
-        alert('ℹ️ HRMS sync completed – no new records to add.');
-      }
+      await loadAllData(); // Reload data after sync
     } catch (error: any) {
       console.error('HRMS sync error:', error);
-      let message = 'Failed to sync with HRMS.';
-      if (error.message.includes('Network')) {
-        message +=
-          '\nNetwork issue or CORS restriction. Please ensure the API allows requests from this origin.';
-      } else {
-        message += `\n${error.message}`;
-      }
-      alert(message);
+      alert(error.response?.data?.detail || 'Failed to sync with HRMS. Please try again.');
     } finally {
       setIsLoading(false);
     }
