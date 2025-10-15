@@ -155,15 +155,11 @@ export default function Reports() {
   };
 
   const handleGenerateReport = () => {
+    // Data is already filtered by the API based on startDate, endDate, and other filters
+    // No need for additional filtering here
     let filteredEmployeeData = [...reportData];
     let filteredSupportStaffData = [...supportStaffReportData];
     let filteredCompanyData = [...companyReportData];
-
-    // Filter by date range
-    if (startDate || endDate) {
-      const billingHistory = localStorage.getItem('billingHistory');
-      if (billingHistory) {
-        let bills: BillingRecord[] = JSON.parse(billingHistory);
         
         if (startDate) {
           bills = bills.filter(bill => bill.date >= startDate);
