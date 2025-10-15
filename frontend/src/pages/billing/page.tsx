@@ -35,6 +35,7 @@ export default function Billing() {
     employee: { breakfast: 20, lunch: 48 },
     company: { breakfast: 135, lunch: 165 }
   });
+  const [todaysConsumption, setTodaysConsumption] = useState<{ breakfast: number; lunch: number }>({ breakfast: 0, lunch: 0 });
 
   // Load data from backend on component mount
   useEffect(() => {
