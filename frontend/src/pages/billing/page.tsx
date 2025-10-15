@@ -51,7 +51,7 @@ export default function Billing() {
       // Extract unique company names from employees
       const uniqueCompanies = [...new Set(
         employeeData
-          .map((emp: any) => emp.company_name)
+          .map((emp: any) => emp.companyName)
           .filter((company: string) => company && company.trim() !== '')
       )];
       setCompanyNames(uniqueCompanies);
