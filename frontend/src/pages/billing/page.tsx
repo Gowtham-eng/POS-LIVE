@@ -155,7 +155,7 @@ export default function Billing() {
 
       if (person) {
         const personId = isEmployee ? person.employeeId : person.staffId;
-        const consumedToday = checkConsumption(personId, isEmployee);
+        const consumedToday = await checkConsumption(personId, isEmployee);
         
         // Check current cart items (non-exception items only)
         const currentBreakfastInCart = cart
