@@ -110,10 +110,10 @@ export default function Billing() {
     
     const todaysBills = billingHistory.filter((bill: any) => 
       bill.date === today && 
-      !bill.isGuest && 
+      !bill.is_guest && 
       (isEmployee ? 
-        (!bill.isSupportStaff && bill.customer?.employeeId === personId) :
-        (bill.isSupportStaff && bill.customer?.staffId === personId)
+        (!bill.is_support_staff && bill.customer?.employee_id === personId) :
+        (bill.is_support_staff && bill.customer?.staff_id === personId)
       )
     );
 
