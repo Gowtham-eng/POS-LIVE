@@ -297,18 +297,22 @@ export default function Billing() {
     }
   };
 
-  const addGuest = () => {
+  const addGuest = async () => {
     if (newGuestName && guestCompanyName) {
-      const newGuest: Guest = {
-        id: Date.now().toString(),
-        name: newGuestName,
-        companyName: guestCompanyName
-      };
-      setGuests([...guests, newGuest]);
-      setSelectedGuest(newGuest.id);
-      setNewGuestName('');
-      setGuestCompanyName('');
-      setShowAddGuest(false);
+      try {
+        const newGuest = await guestAPI.create({
+          name: newGuestName,
+          company_name: guestCompanyName
+        });
+        await loadAllData(); // Reload guests
+        setSelectedGuest(newGuest.id.toString());
+        setNewGuestName('');
+        setGuestCompanyName('');
+        setShowAddGuest(false);
+      } catch (error: any) {
+        console.error('Error adding guest:', error);
+        alert(error.response?.data?.detail || 'Failed to add guest. Please try again.');
+      }
     }
   };
 
