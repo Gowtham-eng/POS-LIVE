@@ -36,49 +36,50 @@ export default function Billing() {
     company: { breakfast: 135, lunch: 165 }
   });
 
-  // Load data from localStorage on component mount
+  // Load data from backend on component mount
   useEffect(() => {
-    const savedEmployees = localStorage.getItem('employees');
-    if (savedEmployees) {
-      const employeeData = JSON.parse(savedEmployees);
+    loadAllData();
+  }, []);
+
+  const loadAllData = async () => {
+    try {
+      // Load employees
+      const employeeData = await employeeAPI.getAll();
       setEmployees(employeeData);
       
       // Extract unique company names from employees
       const uniqueCompanies = [...new Set(
         employeeData
-          .map((emp: Employee) => emp.companyName)
+          .map((emp: any) => emp.company_name)
           .filter((company: string) => company && company.trim() !== '')
       )];
       setCompanyNames(uniqueCompanies);
+
+      // Load guests
+      const guestData = await guestAPI.getAll();
+      setGuests(guestData);
+
+      // Load support staff
+      const staffData = await supportStaffAPI.getAll();
+      setSupportStaff(staffData);
+
+      // Load price master
+      const priceData = await priceMasterAPI.get();
+      setPriceMaster({
+        employee: {
+          breakfast: priceData.employee_breakfast,
+          lunch: priceData.employee_lunch
+        },
+        company: {
+          breakfast: priceData.company_breakfast,
+          lunch: priceData.company_lunch
+        }
+      });
+    } catch (error) {
+      console.error('Error loading data:', error);
+      alert('Failed to load data. Please refresh the page.');
     }
-
-    // Load saved guests
-    const savedGuests = localStorage.getItem('guests');
-    if (savedGuests) {
-      setGuests(JSON.parse(savedGuests));
-    }
-
-    // Load saved support staff
-    const savedSupportStaff = localStorage.getItem('supportStaff');
-    if (savedSupportStaff) {
-      setSupportStaff(JSON.parse(savedSupportStaff));
-    }
-
-    // Load price master
-    const savedPriceMaster = localStorage.getItem('priceMaster');
-    if (savedPriceMaster) {
-      setPriceMaster(JSON.parse(savedPriceMaster));
-    }
-  }, []);
-
-  // Save data to localStorage whenever state changes
-  useEffect(() => {
-    localStorage.setItem('guests', JSON.stringify(guests));
-  }, [guests]);
-
-  useEffect(() => {
-    localStorage.setItem('supportStaff', JSON.stringify(supportStaff));
-  }, [supportStaff]);
+  };
 
   const menuItems = [
     { id: '1', name: 'Breakfast', price: 0, category: 'Breakfast' },
