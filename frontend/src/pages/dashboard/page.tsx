@@ -154,6 +154,15 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className="space-y-6 max-w-7xl mx-auto">
+        {loading && (
+          <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 flex items-center space-x-3">
+              <i className="ri-loader-4-line text-2xl text-blue-600 animate-spin"></i>
+              <span className="text-gray-700 font-medium">Loading dashboard...</span>
+            </div>
+          </div>
+        )}
+        
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
