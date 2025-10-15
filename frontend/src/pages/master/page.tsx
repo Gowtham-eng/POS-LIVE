@@ -132,18 +132,7 @@ export default function Master() {
     setCompanyNames(uniqueCompanies);
   }, [employees]);
 
-  // Save data to localStorage whenever state changes
-  useEffect(() => {
-    localStorage.setItem('employees', JSON.stringify(employees));
-  }, [employees]);
-
-  useEffect(() => {
-    localStorage.setItem('supportStaff', JSON.stringify(supportStaff));
-  }, [supportStaff]);
-
-  useEffect(() => {
-    localStorage.setItem('priceMaster', JSON.stringify(priceMaster));
-  }, [priceMaster]);
+  // Data is now saved to backend via API calls, no need for localStorage sync
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
