@@ -278,7 +278,7 @@ async def update_support_staff(staff_id: int, staff: SupportStaffUpdate, db: Ses
     
     db.commit()
     db.refresh(db_staff)
-    return db_staff
+    return SupportStaffResponse.from_orm(db_staff)
 
 @app.delete("/api/support-staff/{staff_id}")
 async def delete_support_staff(staff_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
