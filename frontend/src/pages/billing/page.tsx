@@ -435,6 +435,142 @@ export default function Billing() {
     setEmployeeSearch('');
     setSupportStaffSearch('');
   };
+  const handleCheckout = async () => {
+    if (cart.length === 0) {
+      alert('Please add items to cart before checkout');
+      return;
+    }
+
+    if (!isGuest && !selectedEmployee && !selectedSupportStaff) {
+      alert('Please select an employee or support staff');
+      return;
+    }
+
+    try {
+      if (isGuest) {
+        if (!selectedGuest) {
+          alert('Please select or add a guest');
+          return;
+        }
+
+        const guest = guests.find(g => g.id.toString() === selectedGuest);
+        if (!guest) {
+          alert('Invalid guest selection');
+          return;
+        }
+
+        const bill = {
+          date: new Date().toISOString().split('T')[0],
+          time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+          is_guest: true,
+          is_support_staff: false,
+          customer: {
+            name: guest.name,
+            companyName: guest.company_name
+          },
+          items: cart.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            isException: item.isException
+          })),
+          total_items: cart.reduce((sum, item) => sum + item.quantity, 0),
+          total_amount: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+          pricing_type: 'company'
+        };
+
+        await billingAPI.create(bill);
+        alert('✅ Checkout successful!');
+        resetCheckout();
+        return;
+      }
+
+      if (selectedEmployee) {
+        const employee = employees.find(e => e.id.toString() === selectedEmployee);
+        if (!employee) {
+          alert('Invalid employee selection');
+          return;
+        }
+
+        const bill = {
+          date: new Date().toISOString().split('T')[0],
+          time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+          is_guest: false,
+          is_support_staff: false,
+          customer: {
+            employeeId: employee.employee_id,
+            employeeName: employee.employee_name,
+            companyName: employee.company_name,
+            entity: employee.entity,
+            mobileNumber: employee.mobile_number,
+            location: employee.location
+          },
+          items: cart.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            isException: item.isException
+          })),
+          total_items: cart.reduce((sum, item) => sum + item.quantity, 0),
+          total_amount: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+          pricing_type: 'employee'
+        };
+
+        await billingAPI.create(bill);
+        alert('✅ Checkout successful!');
+        resetCheckout();
+      } else if (selectedSupportStaff) {
+        const staff = supportStaff.find(s => s.id.toString() === selectedSupportStaff);
+        if (!staff) {
+          alert('Invalid support staff selection');
+          return;
+        }
+
+        const bill = {
+          date: new Date().toISOString().split('T')[0],
+          time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+          is_guest: false,
+          is_support_staff: true,
+          customer: {
+            staffId: staff.staff_id,
+            name: staff.name,
+            designation: staff.designation,
+            companyName: staff.company_name
+          },
+          items: cart.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            isException: item.isException
+          })),
+          total_items: cart.reduce((sum, item) => sum + item.quantity, 0),
+          total_amount: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+          pricing_type: 'employee'
+        };
+
+        await billingAPI.create(bill);
+        alert('✅ Checkout successful!');
+        resetCheckout();
+      }
+    } catch (error: any) {
+      console.error('Error during checkout:', error);
+      alert(error.response?.data?.detail || 'Checkout failed. Please try again.');
+    }
+  };
+
+  const resetCheckout = () => {
+    setCart([]);
+    setSelectedEmployee('');
+    setSelectedSupportStaff('');
+    setSelectedGuest('');
+    setEmployeeSearch('');
+    setSupportStaffSearch('');
+    setIsGuest(false);
+    setTodaysConsumption({ breakfast: 0, lunch: 0 });
+  };
 
   const getSelectedPersonName = () => {
     if (isGuest) {
