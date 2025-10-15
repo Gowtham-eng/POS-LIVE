@@ -303,7 +303,7 @@ async def create_guest(guest: GuestCreate, db: Session = Depends(get_db), curren
     db.add(db_guest)
     db.commit()
     db.refresh(db_guest)
-    return db_guest
+    return GuestResponse.from_orm(db_guest)
 
 # ==================== BILLING ENDPOINTS ====================
 
