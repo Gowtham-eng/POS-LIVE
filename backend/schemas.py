@@ -147,11 +147,36 @@ class BillingCreate(BaseModel):
     total_amount: float
     pricing_type: str = "employee"
 
-class BillingResponse(BillingCreate):
+class BillingResponse(BaseModel):
     id: int
+    date: str
+    time: str
+    isGuest: bool
+    isSupportStaff: bool
+    customer: Dict[str, Any]
+    items: List[Dict[str, Any]]
+    totalItems: int
+    totalAmount: float
+    pricingType: str
     
     class Config:
         from_attributes = True
+        populate_by_name = True
+        
+    @classmethod
+    def from_orm(cls, obj):
+        return cls(
+            id=obj.id,
+            date=obj.date,
+            time=obj.time,
+            isGuest=obj.is_guest,
+            isSupportStaff=obj.is_support_staff,
+            customer=obj.customer,
+            items=obj.items,
+            totalItems=obj.total_items,
+            totalAmount=obj.total_amount,
+            pricingType=obj.pricing_type
+        )
 
 # Price Master schemas
 class PriceMasterUpdate(BaseModel):
