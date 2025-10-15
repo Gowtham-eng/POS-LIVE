@@ -277,58 +277,75 @@ export default function Master() {
     setShowEditForm(true);
   };
 
-  const handleUpdate = (e: React.FormEvent) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (activeTab === 'employee' && editingEmployee) {
-      if (!formData.employeeId || !formData.employeeName) {
-        alert('Employee ID and Employee Name are mandatory fields');
-        return;
+    try {
+      setIsLoading(true);
+
+      if (activeTab === 'employee' && editingEmployee) {
+        if (!formData.employeeId || !formData.employeeName) {
+          alert('Employee ID and Employee Name are mandatory fields');
+          return;
+        }
+
+        const employeeData = {
+          employee_id: formData.employeeId,
+          employee_name: formData.employeeName,
+          company_name: formData.companyName,
+          entity: formData.entity,
+          mobile_number: formData.mobileNumber,
+          location: formData.location,
+          qr_code: formData.qrCode
+        };
+
+        await employeeAPI.update(editingEmployee.id, employeeData);
+        setEditingEmployee(null);
+        alert('Employee updated successfully!');
+      } else if (activeTab === 'supportStaff' && editingSupportStaff) {
+        if (!supportStaffFormData.staffId || !supportStaffFormData.name) {
+          alert('Staff ID and Name are mandatory fields');
+          return;
+        }
+
+        const staffData = {
+          staff_id: supportStaffFormData.staffId,
+          name: supportStaffFormData.name,
+          designation: supportStaffFormData.designation,
+          company_name: supportStaffFormData.companyName,
+          biometric_data: supportStaffFormData.biometricData
+        };
+
+        await supportStaffAPI.update(editingSupportStaff.id, staffData);
+        setEditingSupportStaff(null);
+        alert('Support staff updated successfully!');
       }
 
-      const updated: Employee = {
-        ...editingEmployee,
-        ...formData,
-        createdBy: editingEmployee.createdBy,
-        createdDate: editingEmployee.createdDate
-      };
-
-      setEmployees(employees.map((e) => (e.id === editingEmployee.id ? updated : e)));
-      setEditingEmployee(null);
-    } else if (activeTab === 'supportStaff' && editingSupportStaff) {
-      if (!supportStaffFormData.staffId || !supportStaffFormData.name) {
-        alert('Staff ID and Name are mandatory fields');
-        return;
-      }
-
-      const updated: SupportStaff = {
-        ...editingSupportStaff,
-        ...supportStaffFormData,
-        createdBy: editingSupportStaff.createdBy,
-        createdDate: editingSupportStaff.createdDate
-      };
-
-      setSupportStaff(supportStaff.map((s) => (s.id === editingSupportStaff.id ? updated : s)));
-      setEditingSupportStaff(null);
+      setShowEditForm(false);
+      setFormData({
+        employeeId: '',
+        employeeName: '',
+        companyName: '',
+        entity: '',
+        mobileNumber: '',
+        location: '',
+        qrCode: ''
+      });
+      setSupportStaffFormData({
+        staffId: '',
+        name: '',
+        designation: '',
+        companyName: '',
+        biometricData: ''
+      });
+      
+      await loadAllData(); // Reload data
+    } catch (error: any) {
+      console.error('Error updating record:', error);
+      alert(error.response?.data?.detail || 'Failed to update record. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-
-    setShowEditForm(false);
-    setFormData({
-      employeeId: '',
-      employeeName: '',
-      companyName: '',
-      entity: '',
-      mobileNumber: '',
-      location: '',
-      qrCode: ''
-    });
-    setSupportStaffFormData({
-      staffId: '',
-      name: '',
-      designation: '',
-      companyName: '',
-      biometricData: ''
-    });
   };
 
   const handleDelete = (item: Employee | SupportStaff) => {
