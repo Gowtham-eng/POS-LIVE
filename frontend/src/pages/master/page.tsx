@@ -74,12 +74,19 @@ export default function Master() {
 
   const [companyNames, setCompanyNames] = useState<string[]>([]);
 
-  // Load data from localStorage on component mount
+  // Load data from backend on component mount
   useEffect(() => {
-    const savedEmployees = localStorage.getItem('employees');
-    if (savedEmployees) {
-      const employeeData = JSON.parse(savedEmployees);
+    loadAllData();
+  }, []);
+
+  const loadAllData = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Load employees
+      const employeeData = await employeeAPI.getAll();
       setEmployees(employeeData);
+      
       const uniqueCompanies = [
         ...new Set(
           employeeData
@@ -88,18 +95,30 @@ export default function Master() {
         )
       ];
       setCompanyNames(uniqueCompanies);
-    }
 
-    const savedSupportStaff = localStorage.getItem('supportStaff');
-    if (savedSupportStaff) {
-      setSupportStaff(JSON.parse(savedSupportStaff));
-    }
+      // Load support staff
+      const staffData = await supportStaffAPI.getAll();
+      setSupportStaff(staffData);
 
-    const savedPriceMaster = localStorage.getItem('priceMaster');
-    if (savedPriceMaster) {
-      setPriceMaster(JSON.parse(savedPriceMaster));
+      // Load price master
+      const priceData = await priceMasterAPI.get();
+      setPriceMaster({
+        employee: {
+          breakfast: priceData.employee_breakfast,
+          lunch: priceData.employee_lunch
+        },
+        company: {
+          breakfast: priceData.company_breakfast,
+          lunch: priceData.company_lunch
+        }
+      });
+    } catch (error) {
+      console.error('Error loading data:', error);
+      alert('Failed to load data. Please refresh the page.');
+    } finally {
+      setIsLoading(false);
     }
-  }, []);
+  };
 
   // Update company names when employees change
   useEffect(() => {
