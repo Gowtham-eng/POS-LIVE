@@ -888,10 +888,7 @@ export default function Billing() {
                       {filteredSupportStaff.map((staff) => (
                         <button
                           key={staff.id}
-                          onClick={() => {
-                            setSelectedSupportStaff(staff.id);
-                            setSupportStaffSearch(`${staff.name} (${staff.staffId})`);
-                          }}
+                          onClick={() => handleSupportStaffSelect(staff.id, staff.name, staff.staffId)}
                           className="w-full px-2 py-2 text-left hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
                         >
                           <div className="flex items-center space-x-2">
