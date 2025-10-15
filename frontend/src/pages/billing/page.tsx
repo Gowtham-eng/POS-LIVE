@@ -136,7 +136,7 @@ export default function Billing() {
     return { breakfast: breakfastCount, lunch: lunchCount };
   };
 
-  const addToCart = (item: typeof menuItems[0]) => {
+  const addToCart = async (item: typeof menuItems[0]) => {
     // Only validate for employees and support staff, not guests
     if (!isGuest) {
       let person: any = null;
