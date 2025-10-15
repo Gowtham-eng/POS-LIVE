@@ -162,56 +162,76 @@ export default function Master() {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (activeTab === 'employee') {
-      if (!formData.employeeId || !formData.employeeName) {
-        alert('Employee ID and Employee Name are mandatory fields');
-        return;
+    try {
+      setIsLoading(true);
+
+      if (activeTab === 'employee') {
+        if (!formData.employeeId || !formData.employeeName) {
+          alert('Employee ID and Employee Name are mandatory fields');
+          return;
+        }
+
+        const employeeData = {
+          employee_id: formData.employeeId,
+          employee_name: formData.employeeName,
+          company_name: formData.companyName,
+          entity: formData.entity,
+          mobile_number: formData.mobileNumber,
+          location: formData.location,
+          qr_code: formData.qrCode
+        };
+
+        await employeeAPI.create(employeeData);
+        
+        setFormData({
+          employeeId: '',
+          employeeName: '',
+          companyName: '',
+          entity: '',
+          mobileNumber: '',
+          location: '',
+          qrCode: ''
+        });
+        
+        alert('Employee added successfully!');
+      } else {
+        if (!supportStaffFormData.staffId || !supportStaffFormData.name) {
+          alert('Staff ID and Name are mandatory fields');
+          return;
+        }
+
+        const staffData = {
+          staff_id: supportStaffFormData.staffId,
+          name: supportStaffFormData.name,
+          designation: supportStaffFormData.designation,
+          company_name: supportStaffFormData.companyName,
+          biometric_data: supportStaffFormData.biometricData
+        };
+
+        await supportStaffAPI.create(staffData);
+        
+        setSupportStaffFormData({
+          staffId: '',
+          name: '',
+          designation: '',
+          companyName: '',
+          biometricData: ''
+        });
+        
+        alert('Support staff added successfully!');
       }
 
-      const newEmployee: Employee = {
-        id: Date.now().toString(),
-        ...formData,
-        createdBy: 'Admin',
-        createdDate: new Date().toISOString().split('T')[0]
-      };
-
-      setEmployees([...employees, newEmployee]);
-      setFormData({
-        employeeId: '',
-        employeeName: '',
-        companyName: '',
-        entity: '',
-        mobileNumber: '',
-        location: '',
-        qrCode: ''
-      });
-    } else {
-      if (!supportStaffFormData.staffId || !supportStaffFormData.name) {
-        alert('Staff ID and Name are mandatory fields');
-        return;
-      }
-
-      const newSupportStaff: SupportStaff = {
-        id: Date.now().toString(),
-        ...supportStaffFormData,
-        createdBy: 'Admin',
-        createdDate: new Date().toISOString().split('T')[0]
-      };
-
-      setSupportStaff([...supportStaff, newSupportStaff]);
-      setSupportStaffFormData({
-        staffId: '',
-        name: '',
-        designation: '',
-        companyName: '',
-        biometricData: ''
-      });
+      setShowAddForm(false);
+      await loadAllData(); // Reload data
+    } catch (error: any) {
+      console.error('Error adding record:', error);
+      alert(error.response?.data?.detail || 'Failed to add record. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-
-    setShowAddForm(false);
   };
 
   const syncWithHRMS = async () => {
