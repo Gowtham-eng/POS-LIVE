@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import Layout from '../../components/feature/Layout';
+import { reportsAPI } from '../../services/api';
 
 interface BillingRecord {
   id: string;
