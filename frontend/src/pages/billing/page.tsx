@@ -1270,11 +1270,11 @@ export default function Billing() {
                   </div>
                 </div>
                 <button
-                  onClick={handlePrintBill}
+                  onClick={handleCheckout}
                   className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all cursor-pointer whitespace-nowrap flex items-center justify-center shadow-lg hover:shadow-xl text-sm"
                 >
-                  <i className="ri-printer-line mr-2"></i>
-                  Print Bill
+                  <i className="ri-shopping-cart-check-line mr-2"></i>
+                  Checkout
                 </button>
               </div>
             )}
