@@ -157,7 +157,7 @@ async def create_employee(employee: EmployeeCreate, db: Session = Depends(get_db
     db.add(db_employee)
     db.commit()
     db.refresh(db_employee)
-    return db_employee
+    return EmployeeResponse.from_orm(db_employee)
 
 @app.put("/api/employees/{employee_id}", response_model=EmployeeResponse)
 async def update_employee(employee_id: int, employee: EmployeeUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
