@@ -468,15 +468,25 @@ export default function Billing() {
             name: guest.name,
             companyName: guest.companyName
           },
-          items: cart.map(item => ({
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            isException: item.isException
-          })),
+          items: cart.map(item => {
+            const itemPrice = item.name === 'Breakfast' ? 
+              priceMaster.employee.breakfast : 
+              priceMaster.employee.lunch;
+            return {
+              id: item.id,
+              name: item.name,
+              price: itemPrice,
+              quantity: item.quantity,
+              isException: item.isException
+            };
+          }),
           total_items: cart.reduce((sum, item) => sum + item.quantity, 0),
-          total_amount: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+          total_amount: cart.reduce((sum, item) => {
+            const itemPrice = item.name === 'Breakfast' ? 
+              priceMaster.employee.breakfast : 
+              priceMaster.employee.lunch;
+            return sum + (itemPrice * item.quantity);
+          }, 0),
           pricing_type: 'company'
         };
 
@@ -503,15 +513,25 @@ export default function Billing() {
             employeeName: employee.employeeName,
             companyName: employee.companyName
           },
-          items: cart.map(item => ({
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            isException: item.isException
-          })),
+          items: cart.map(item => {
+            const itemPrice = item.name === 'Breakfast' ? 
+              priceMaster.employee.breakfast : 
+              priceMaster.employee.lunch;
+            return {
+              id: item.id,
+              name: item.name,
+              price: itemPrice,
+              quantity: item.quantity,
+              isException: item.isException
+            };
+          }),
           total_items: cart.reduce((sum, item) => sum + item.quantity, 0),
-          total_amount: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+          total_amount: cart.reduce((sum, item) => {
+            const itemPrice = item.name === 'Breakfast' ? 
+              priceMaster.employee.breakfast : 
+              priceMaster.employee.lunch;
+            return sum + (itemPrice * item.quantity);
+          }, 0),
           pricing_type: 'employee'
         };
 
@@ -536,15 +556,25 @@ export default function Billing() {
             designation: staff.designation,
             companyName: staff.companyName
           },
-          items: cart.map(item => ({
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            isException: item.isException
-          })),
+          items: cart.map(item => {
+            const itemPrice = item.name === 'Breakfast' ? 
+              priceMaster.employee.breakfast : 
+              priceMaster.employee.lunch;
+            return {
+              id: item.id,
+              name: item.name,
+              price: itemPrice,
+              quantity: item.quantity,
+              isException: item.isException
+            };
+          }),
           total_items: cart.reduce((sum, item) => sum + item.quantity, 0),
-          total_amount: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+          total_amount: cart.reduce((sum, item) => {
+            const itemPrice = item.name === 'Breakfast' ? 
+              priceMaster.employee.breakfast : 
+              priceMaster.employee.lunch;
+            return sum + (itemPrice * item.quantity);
+          }, 0),
           pricing_type: 'employee'
         };
 
