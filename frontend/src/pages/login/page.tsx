@@ -49,6 +49,13 @@ export default function Login() {
         </div>
         
         <form onSubmit={handleLogin} className="space-y-6">
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700 flex items-center">
+              <i className="ri-error-warning-line mr-2"></i>
+              {error}
+            </div>
+          )}
+          
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-3">
               <i className="ri-user-line mr-2"></i>
