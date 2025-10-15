@@ -330,7 +330,7 @@ async def create_billing(billing: BillingCreate, db: Session = Depends(get_db), 
     db.add(db_billing)
     db.commit()
     db.refresh(db_billing)
-    return db_billing
+    return BillingResponse.from_orm(db_billing)
 
 # ==================== PRICE MASTER ENDPOINTS ====================
 
