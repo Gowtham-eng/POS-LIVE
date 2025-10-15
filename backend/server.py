@@ -144,7 +144,7 @@ async def verify_token(current_user: User = Depends(get_current_user)):
 @app.get("/api/employees", response_model=List[EmployeeResponse])
 async def get_employees(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     employees = db.query(Employee).all()
-    return employees
+    return [EmployeeResponse.from_orm(emp) for emp in employees]
 
 @app.post("/api/employees", response_model=EmployeeResponse)
 async def create_employee(employee: EmployeeCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
