@@ -157,11 +157,11 @@ export default function Billing() {
       let isEmployee = true;
 
       if (isSupportStaff && selectedSupportStaff) {
-        person = supportStaff.find(staff => staff.id === selectedSupportStaff);
+        person = supportStaff.find(staff => staff.id.toString() === selectedSupportStaff);
         personName = person?.name || '';
         isEmployee = false;
       } else if (!isSupportStaff && selectedEmployee) {
-        person = employees.find(emp => emp.id === selectedEmployee);
+        person = employees.find(emp => emp.id.toString() === selectedEmployee);
         personName = person?.employeeName || '';
         isEmployee = true;
       }
