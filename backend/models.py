@@ -59,6 +59,7 @@ class BillingRecord(Base):
     total_items = Column(Integer, nullable=False)
     total_amount = Column(Float, nullable=False)
     pricing_type = Column(String(20), default="employee")
+    created_by = Column(String(50), nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class PriceMaster(Base):
