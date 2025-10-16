@@ -158,6 +158,7 @@ class BillingResponse(BaseModel):
     totalItems: int
     totalAmount: float
     pricingType: str
+    createdBy: str
     
     class Config:
         from_attributes = True
@@ -175,7 +176,8 @@ class BillingResponse(BaseModel):
             items=obj.items,
             totalItems=obj.total_items,
             totalAmount=obj.total_amount,
-            pricingType=obj.pricing_type
+            pricingType=obj.pricing_type,
+            createdBy=obj.created_by
         )
 
 # Price Master schemas
