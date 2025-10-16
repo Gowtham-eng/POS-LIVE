@@ -455,6 +455,10 @@ async def get_employee_report(
 ):
     query = db.query(BillingRecord).filter(BillingRecord.is_support_staff == False)
     
+    # Role-based filtering: admin sees all, others see only their own records
+    if current_user.username != "admin":
+        query = query.filter(BillingRecord.created_by == current_user.username)
+    
     if start_date:
         query = query.filter(BillingRecord.date >= start_date)
     if end_date:
