@@ -326,7 +326,7 @@ async def get_billing_history(
 
 @app.post("/api/billing/create", response_model=BillingResponse)
 async def create_billing(billing: BillingCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    db_billing = BillingRecord(**billing.dict())
+    db_billing = BillingRecord(**billing.dict(), created_by=current_user.username)
     db.add(db_billing)
     db.commit()
     db.refresh(db_billing)
