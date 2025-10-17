@@ -1,4 +1,47 @@
-// Utility function to print receipt
+// API endpoint for print server
+const PRINT_SERVER_URL = 'http://localhost:8002';
+
+// Silent print via local print server (recommended for thermal printers)
+export const printReceiptSilent = async (receiptData: any) => {
+  try {
+    const response = await fetch(`${PRINT_SERVER_URL}/api/print/receipt`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(receiptData),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Print failed');
+    }
+    
+    const result = await response.json();
+    console.log('Print successful:', result);
+    return true;
+  } catch (error: any) {
+    console.error('Silent print failed:', error);
+    // Fallback to browser print if print server is not available
+    throw error;
+  }
+};
+
+// Check if print server is available
+export const checkPrintServer = async () => {
+  try {
+    const response = await fetch(`${PRINT_SERVER_URL}/api/print/status`, {
+      method: 'GET',
+    });
+    const status = await response.json();
+    return status.connected;
+  } catch (error) {
+    console.log('Print server not available');
+    return false;
+  }
+};
+
+// Browser-based print (fallback)
 export const printReceipt = (receiptElementId: string = 'receipt-print') => {
   return new Promise<void>((resolve, reject) => {
     try {
