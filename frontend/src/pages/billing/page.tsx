@@ -627,7 +627,28 @@ export default function Billing() {
           pricing_type: 'employee'
         };
 
-        await billingAPI.create(bill);
+        const createdBill = await billingAPI.create(bill);
+        
+        // Generate receipt data
+        const currentUser = localStorage.getItem('currentUser') || 'Admin';
+        const receipt = generateReceiptData({
+          ...bill,
+          id: createdBill.id,
+          customer: staff,
+          isGuest: false,
+          isSupportStaff: true
+        }, currentUser);
+        
+        // Show receipt and auto-print
+        setReceiptData(receipt);
+        setShowReceipt(true);
+        
+        // Auto-print after a short delay
+        setTimeout(async () => {
+          await autoPrintReceipt(receipt);
+          setShowReceipt(false);
+        }, 500);
+        
         alert('✅ Checkout successful!');
         resetCheckout();
       }
