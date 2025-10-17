@@ -33,6 +33,8 @@ export default function Billing() {
     consumedToday: { breakfast: number; lunch: number };
   } | null>(null);
   const [pendingItem, setPendingItem] = useState<typeof menuItems[0] | null>(null);
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [receiptData, setReceiptData] = useState<any>(null);
   const [priceMaster, setPriceMaster] = useState<PriceMaster>({
     employee: { breakfast: 20, lunch: 48 },
     company: { breakfast: 135, lunch: 165 }
