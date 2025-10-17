@@ -1351,6 +1351,43 @@ export default function Billing() {
           </div>
         </div>
       </div>
+
+      {/* Receipt Modal - Hidden, only for printing */}
+      {showReceipt && receiptData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md">
+            <div className="p-4 border-b flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Receipt Preview</h3>
+              <button
+                onClick={() => setShowReceipt(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <i className="ri-close-line text-2xl"></i>
+              </button>
+            </div>
+            <div className="p-4">
+              <Receipt {...receiptData} />
+            </div>
+            <div className="p-4 border-t flex gap-2">
+              <button
+                onClick={async () => {
+                  await autoPrintReceipt(receiptData);
+                }}
+                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <i className="ri-printer-line mr-2"></i>
+                Print Again
+              </button>
+              <button
+                onClick={() => setShowReceipt(false)}
+                className="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }
