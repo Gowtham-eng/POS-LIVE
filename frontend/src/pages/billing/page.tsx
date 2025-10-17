@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import Layout from '../../components/feature/Layout';
 import { employeeAPI, supportStaffAPI, guestAPI, billingAPI, priceMasterAPI } from '../../services/api';
+import Receipt from '../../components/Receipt';
+import { generateReceiptData, autoPrintReceipt } from '../../utils/printReceipt';
 
 export default function Billing() {
   const [cart, setCart] = useState<CartItem[]>([]);
