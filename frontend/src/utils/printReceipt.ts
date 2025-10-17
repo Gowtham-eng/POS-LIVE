@@ -156,16 +156,24 @@ export const generateReceiptData = (billing: any, currentUser: string) => {
   };
 };
 
-// Auto-print function for thermal printer
+// Auto-print function for thermal printer (tries silent print first, falls back to browser print)
 export const autoPrintReceipt = async (receiptData: any, elementId: string = 'receipt-print') => {
   try {
-    // Wait a moment for the receipt component to render
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
-    // Print the receipt
-    await printReceipt(elementId);
-    
-    return true;
+    // Try silent print via print server first
+    try {
+      await printReceiptSilent(receiptData);
+      console.log('✅ Silent print successful');
+      return true;
+    } catch (silentError) {
+      console.log('Silent print not available, falling back to browser print');
+      
+      // Wait a moment for the receipt component to render
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Fallback to browser print
+      await printReceipt(elementId);
+      return true;
+    }
   } catch (error) {
     console.error('Auto-print failed:', error);
     return false;
